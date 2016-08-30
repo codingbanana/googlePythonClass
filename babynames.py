@@ -41,15 +41,26 @@ def extract_names(filename):
   ['2006', 'Aaliyah 91', Aaron 57', 'Abagail 895', ' ...]
   """
   # +++your code here+++
-  output=[]
-  for year in range(1990,2008):
-    f=open('baby'+year+'.html','r')
-    output.append(str(year))
-    for line in f.readlines():
-      re.search('<td>\S+</td>')
+  yearly=[]
+  name_rank=[]
+  f=open(filename,'r')
 
-
-  return
+  for line in f.readlines():
+    found1=re.search(r'Popularity in (\d\d\d\d)',line)
+    if found1:
+      year=found1.group(1)
+    #found2 = re.findall(r'(<td>(.*?)</td>)',line)
+    found2 = re.findall(r'<td>(\d+)</td><td>(\w+)</td>\<td>(\w+)</td>', line)
+    if found2:
+      rank = found2[0][0]
+      boy = found2[0][1]
+      girl = found2[0][2]
+      name_rank.append(boy + ' ' + str(rank))
+      name_rank.append(girl + ' ' + str(rank))
+  name_rank.sort()
+  yearly.append(str(year))
+  yearly.extend(name_rank)
+  return yearly
 
 
 def main():
@@ -71,6 +82,17 @@ def main():
   # +++your code here+++
   # For each filename, get the names, then either print the text output
   # or write it to a summary file
+  multiyear = []
+  for file in args:
+    yearly = extract_names(file)
+    text='\n'.join(yearly) + '\n'
+
+    if summary==True:
+      f=open(file+'.summary','w')
+      f.write(text)
+      f.close()
+    else:
+      print text
 
 if __name__ == '__main__':
   main()
